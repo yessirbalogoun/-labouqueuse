@@ -217,6 +217,7 @@ nav.scrolled {
 .hero-img {
   width: 100%; height: 100%;
   object-fit: cover;
+  object-position: center center;
   transform: scale(1.05);
   transition: transform 8s ease;
 }
@@ -697,21 +698,88 @@ footer {
   .nav-links { display: none; }
   #hero { grid-template-columns: 1fr; min-height: auto; }
   .hero-left { padding: 120px 24px 60px; }
-  .hero-title { font-size: 52px; }
-  .hero-right { height: 350px; }
+  .hero-title { font-size: 44px; }
+  .hero-right { height: 300px; }
   .hero-right::after { background: linear-gradient(to bottom, var(--cream) 0%, transparent 30%); }
-  section { padding: 80px 24px; }
-  #apropos { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
+  section { padding: 70px 20px; }
+  #apropos { grid-template-columns: 1fr; gap: 40px; padding: 70px 20px; }
+  .apropos-img-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .apropos-img-grid .img-wrap:first-child { grid-row: auto; height: 180px; }
+  .apropos-img-grid .img-wrap { height: 180px; }
+  .apropos-stats { gap: 24px; }
+  .stat-val { font-size: 36px; }
   .catalogue-grid { grid-template-columns: 1fr; }
   .product-card:nth-child(2), .product-card:nth-child(3) { margin-top: 0; }
   .temoignages-grid { grid-template-columns: 1fr; }
-  #commande { grid-template-columns: 1fr; gap: 60px; }
+  #commande { grid-template-columns: 1fr; gap: 40px; }
+  .commande-img-main { height: 280px; }
   .commande-img-accent { display: none; }
-  .footer-top { grid-template-columns: 1fr; gap: 40px; }
-  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
-  .section-title { font-size: 38px; }
+  .commande-deco { display: none; }
+  .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+  .section-title { font-size: 34px; }
+  .hero-badge { bottom: 16px; right: 16px; padding: 12px 16px; }
+  .hero-badge-num { font-size: 32px; }
+  .galerie-item { flex: 0 0 220px; height: 280px; }
+  .hero-scroll { display: none; }
   .cursor, .cursor-ring { display: none; }
   body { cursor: auto; }
+}
+
+/* ══ HAMBURGER & MENU MOBILE ══ */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 200;
+}
+.hamburger span {
+  display: block;
+  width: 24px; height: 2px;
+  background: var(--green);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--cream);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  transform: translateX(100%);
+  transition: transform 0.4s ease;
+}
+.mobile-menu.open { transform: translateX(0); }
+.mobile-menu a {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px; font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.mobile-menu a:hover { color: var(--gold); }
+.mobile-close {
+  position: absolute;
+  top: 24px; right: 24px;
+  background: none; border: none;
+  font-size: 24px; color: var(--green);
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .hamburger { display: flex; }
 }
 </style>
 </head>
@@ -735,13 +803,24 @@ footer {
     <img src="images/logo.jpg" alt="La Bouqueuse" style="height:44px;width:auto;border-radius:50%;object-fit:cover">
     La <span>Bouqueuse</span>
   </a>
-  <ul class="nav-links">
-    <li><a href="#apropos">À propos</a></li>
-    <li><a href="#catalogue">Bouquets</a></li>
-    <li><a href="#galerie">Galerie</a></li>
-    <li><a href="#commande" class="nav-cta">Commander</a></li>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#apropos" onclick="closeMenu()">À propos</a></li>
+    <li><a href="#catalogue" onclick="closeMenu()">Bouquets</a></li>
+    <li><a href="#galerie" onclick="closeMenu()">Galerie</a></li>
+    <li><a href="#commande" class="nav-cta" onclick="closeMenu()">Commander</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<!-- Menu mobile overlay -->
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-close" onclick="closeMenu()">✕</button>
+  <a href="#apropos" onclick="closeMenu()">À propos</a>
+  <a href="#catalogue" onclick="closeMenu()">Bouquets</a>
+  <a href="#galerie" onclick="closeMenu()">Galerie</a>
+  <a href="#commande" onclick="closeMenu()" style="color:var(--gold);font-weight:600">Commander →</a>
+</div>
 
 <!-- ══ HERO ══ -->
 <section id="hero">
@@ -771,7 +850,7 @@ footer {
   </div>
 
   <div class="hero-right">
-    <img src="images/hero.jpg" alt="Bouquets La Bouqueuse" class="hero-img">
+    <img src="images/hero.jpg" alt="Bouquets La Bouqueuse" class="hero-img" style="object-position:center center">
 
     <div class="hero-badge">
       <div class="hero-badge-num">∞</div>
@@ -820,7 +899,7 @@ footer {
       <img src="images/apropos1.jpg" alt="La Bouqueuse" style="width:100%;height:100%;object-fit:cover">
     </div>
     <div class="img-wrap">
-      <img src="images/apropos2.jpg" alt="La Bouqueuse" style="width:100%;height:100%;object-fit:cover">
+      <img src="images/apropos2.jpg" alt="La Bouqueuse" style="width:100%;height:100%;object-fit:cover;object-position:center center">
     </div>
     <div class="img-wrap">
       <img src="images/apropos3.jpg" alt="La Bouqueuse" style="width:100%;height:100%;object-fit:cover">
@@ -936,17 +1015,17 @@ footer {
   <div class="temoignages-grid">
     <div class="temoignage-card reveal reveal-delay-1">
       <div class="temoignage-stars">★★★★★</div>
-      <p class="temoignage-text">« Mon bouquet de mariage était absolument magnifique. Elle a su capturer exactement ce que je voulais. Un travail d'une beauté exceptionnelle. »</p>
-      <div class="temoignage-author">— Aminata K., Cotonou</div>
+      <p class="temoignage-text">« J'ai offert un bouquet à ma copine pour la Saint-Valentin et elle était aux anges. Elle m'a dit que c'était le plus beau cadeau qu'elle ait jamais reçu. Merci La Bouqueuse ! »</p>
+      <div class="temoignage-author">— Fadil, Abomey-Calavi</div>
     </div>
     <div class="temoignage-card reveal reveal-delay-2">
       <div class="temoignage-stars">★★★★★</div>
-      <p class="temoignage-text">« J'ai commandé un bouquet surprise pour ma maman. Elle a pleuré de joie. Merci La Bouqueuse pour avoir rendu ce moment inoubliable. »</p>
-      <div class="temoignage-author">— Fatoumata D., Porto-Novo</div>
+      <p class="temoignage-text">« J'ai surpris ma petite amie pour son anniversaire avec un bouquet de La Bouqueuse. Elle n'en revenait pas — elle l'a posé dans le salon et tout le monde qui passe demande d'où ça vient. »</p>
+      <div class="temoignage-author">— Serge, Cotonou</div>
     </div>
     <div class="temoignage-card reveal reveal-delay-3">
       <div class="temoignage-stars">★★★★★</div>
-      <p class="temoignage-text">« Des fleurs artificielles d'une qualité exceptionnelle, une livraison ponctuelle et un service chaleureux. Je commande maintenant chaque mois sans hésiter. »</p>
+      <p class="temoignage-text">« Des fleurs artificielles d'une qualité exceptionnelle, une livraison ponctuelle et un service chaleureux. Maintenant je vais tout le temps commander sans hésiter. »</p>
       <div class="temoignage-author">— Marie-Claire A., Abomey-Calavi</div>
     </div>
   </div>
@@ -982,6 +1061,15 @@ footer {
           <div class="step-desc">Livraison ou retrait. Votre bouquet prêt dans les délais — pour durer des années.</div>
         </div>
       </li>
+      <li class="reveal reveal-delay-4" style="margin-top:8px">
+        <div style="background:rgba(196,122,128,0.1);border:1px solid rgba(196,122,128,0.3);border-radius:12px;padding:16px 20px;display:flex;align-items:flex-start;gap:14px">
+          <span style="font-size:22px;flex-shrink:0">⏰</span>
+          <div>
+            <div style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);margin-bottom:4px">Commande à l'avance</div>
+            <div style="font-size:16px;font-weight:300;color:var(--gray);line-height:1.6">Pour garantir la disponibilité de votre bouquet, nous vous conseillons de commander au moins <strong style="color:var(--green)">24h à l'avance</strong> — surtout pour les occasions spéciales.</div>
+          </div>
+        </div>
+      </li>
     </ul>
     <a href="https://wa.me/2290146627996?text=Bonjour%20La%20Bouqueuse%20%F0%9F%8C�%2C%20je%20souhaite%20commander%20un%20bouquet%20!" 
        class="wa-btn reveal reveal-delay-4" target="_blank">
@@ -996,7 +1084,7 @@ footer {
         IMAGE COMMANDE PRINCIPALE
         Remplacer par : <img src="images/commande.jpg" alt="Commander un bouquet">
       -->
-      <img src="images/commande.jpg" alt="Commander un bouquet" style="width:100%;height:100%;object-fit:cover">
+      <img src="images/commande.jpg" alt="Commander un bouquet" style="width:100%;height:100%;object-fit:cover;object-position:center center">
     </div>
     <div class="commande-img-accent">
       <!--
@@ -1015,11 +1103,7 @@ footer {
     <div>
       <div class="footer-brand-name">La <span>Bouqueuse</span></div>
       <p class="footer-brand-desc">Des bouquets artificiels pensés avec cœur, pour tous les moments qui comptent — et qui restent.</p>
-      <div class="footer-social">
-        <a href="#" title="Instagram">📷</a>
-        <a href="#" title="Facebook">📘</a>
-        <a href="https://wa.me/2290146627996" title="WhatsApp" target="_blank">💬</a>
-      </div>
+
     </div>
     <div>
       <div class="footer-col-title">Navigation</div>
@@ -1035,8 +1119,8 @@ footer {
       <div class="footer-col-title">Contact</div>
       <ul class="footer-links">
         <li><a href="https://wa.me/2290146627996" target="_blank">💬 WhatsApp</a></li>
-        <li><a href="#">📍 Votre ville</a></li>
-        <li><a href="#">🕐 Lun – Sam : 8h – 20h</a></li>
+        <li><a href="#">📍 Abomey-Calavi, Bénin</a></li>
+        <li><a href="#">🕐 24h/24 — 7j/7</a></li>
       </ul>
     </div>
   </div>
@@ -1107,6 +1191,20 @@ window.addEventListener('scroll', () => {
     heroImg.style.transform = `scale(1.05) translateY(${window.scrollY * 0.15}px)`
   }
 })
+
+// ── MENU HAMBURGER ──
+function toggleMenu() {
+  const menu = document.getElementById('mobile-menu')
+  const btn  = document.getElementById('hamburger')
+  menu.classList.toggle('open')
+  btn.classList.toggle('open')
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : ''
+}
+function closeMenu() {
+  document.getElementById('mobile-menu').classList.remove('open')
+  document.getElementById('hamburger').classList.remove('open')
+  document.body.style.overflow = ''
+}
 </script>
 
 </body>
